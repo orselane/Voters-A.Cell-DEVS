@@ -21,7 +21,7 @@ https://github.com/orselane/Voters-cell-DEVS
 # Test frames
 The testScripts folder has three possible experimental frames.
 Between the frames, the controlled variable is the initial proportional distribution of preferences on the board. 
-Note: The inital positions are randomly distributed, according to the determined proportions.
+Note: The inital positions are arbitrarily distributed, according to the determined proportions.
 
 ## evenDistributionTest.sh
 This test distribution spreads the preferences equally for the main preferences, 
