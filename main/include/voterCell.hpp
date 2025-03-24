@@ -1,8 +1,9 @@
 #ifndef VOTER_CELL_HPP
 #define VOTER_CELL_HPP
 // Would be cool to get these from JASON
-#define PROBABILITY 50
+#define PROBABILITY 20
 #define NUM_NEIGHBORS 4
+#define rand_between(x, y) x + rand() % (y-x)
 
 #include <cmath>
 #include <nlohmann/json.hpp>
@@ -14,40 +15,23 @@ using namespace cadmium::celldevs;
 
 // Voter cell.
 class voter : public GridCell<voterState, double> {
-	private: int neighborCaps[NUM_NEIGHBORS];
-	
 	public:
 	voter(const std::vector<int>& id, 
 			const std::shared_ptr<const GridCellConfig<voterState, double>>& config
-		  ): GridCell<voterState, double>(id, config) { 
-	   for(int i = 0; i < NUM_NEIGHBORS; i++){
-	      neighborCaps[i] = PROBABILITY + i * (PROBABILITY/NUM_NEIGHBORS); 
-	   }
-	}
+		  ): GridCell<voterState, double>(id, config) { }
 
 	// Tau function
 	[[nodiscard]] voterState localComputation(voterState state,
 		const std::unordered_map<std::vector<int>, NeighborData<voterState, double>>& neighborhood) const override {
 		
-		// TODO: Pretty sure almost all the logic can be replaced by a single T/F check because the map is unordered. Should be able to get a random cell. Not familiar enough with C++ yet though.
+		// If the change probability is not met, do nothing
 		int randomNum = rand() % 101;
+		if (randomNum < PROBABILITY)
+		   return state;
 		
-		// Determine neighbor bias based on range buckets
-		int neighborBias = 0;
-		for(int i = 0; i < NUM_NEIGHBORS; i++){
-		   if(randomNum > neighborCaps[i])
-		      break;
-		   neighborBias++;
-		}
-		
-		// Get biased neighbor's state. (will default to nothing if randomNum < probability)
-		int neighborCount = 0;
-		for (const auto& [neighborId, neighborData]: neighborhood) {
-			if(neighborCount == neighborBias) {
-				state.preference = neighborData.state->preference;
-			}
-			neighborCount++;
-		}
+		// Get random neighbor, take their preference
+		auto random_neighbor = std::next(std::begin(neighborhood), rand_between(0, neighborhood.size()));
+		state.preference = random_neighbor->second.state->preference;
 
 		return state;
 	}
