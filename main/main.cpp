@@ -26,6 +26,9 @@ int main(int argc, char ** argv) {
 		std::cout << argv[0] << " SCENARIO_CONFIG.json [MAX_SIMULATION_TIME (default: 500)]" << std::endl;
 		return -1;
 	}
+	// seed rand
+	srand (static_cast <unsigned> (time(0)));
+
 	std::string configFilePath = argv[1];
 	double simTime = (argc > 2)? std::stod(argv[2]) : 500;
 
