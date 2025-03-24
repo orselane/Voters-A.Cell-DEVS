@@ -14,7 +14,7 @@ struct voterState {
 };
 
 // It prints the preference of the cell in an output stream.
-std::ostream& operator<<(std::ostream& os, const conwayState& x) {
+std::ostream& operator<<(std::ostream& os, const voterState& x) {
 	os << "<" << (x.preference) << ">";
 	return os;
 }

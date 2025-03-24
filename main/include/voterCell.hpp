@@ -14,7 +14,7 @@ using namespace cadmium::celldevs;
 
 // Voter cell.
 class voter : public GridCell<voterState, double> {
-	private int neighborCaps[NUM_NEIGHBORS];
+	private: int neighborCaps[NUM_NEIGHBORS];
 	
 	public:
 	voter(const std::vector<int>& id, 

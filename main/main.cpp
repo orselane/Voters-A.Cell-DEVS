@@ -5,16 +5,16 @@
 #include <chrono>
 #include <fstream>
 #include <string>
-#include "include/conwayCell.hpp"
+#include "include/voterCell.hpp"
 
 using namespace cadmium::celldevs;
 using namespace cadmium;
 
-std::shared_ptr<GridCell<conwayState, double>> addGridCell(const coordinates & cellId, const std::shared_ptr<const GridCellConfig<conwayState, double>>& cellConfig) {
+std::shared_ptr<GridCell<voterState, double>> addGridCell(const coordinates & cellId, const std::shared_ptr<const GridCellConfig<voterState, double>>& cellConfig) {
 	auto cellModel = cellConfig->cellModel;
 
-	if (cellModel == "conway") {
-		return std::make_shared<conway>(cellId, cellConfig);
+	if (cellModel == "voter") {
+		return std::make_shared<voter>(cellId, cellConfig);
 	} else {
 		throw std::bad_typeid();
 	}
@@ -29,7 +29,7 @@ int main(int argc, char ** argv) {
 	std::string configFilePath = argv[1];
 	double simTime = (argc > 2)? std::stod(argv[2]) : 500;
 
-	auto model = std::make_shared<GridCellDEVSCoupled<conwayState, double>>("conway", addGridCell, configFilePath);
+	auto model = std::make_shared<GridCellDEVSCoupled<voterState, double>>("voter", addGridCell, configFilePath);
 	model->buildModel();
 	
 	auto rootCoordinator = RootCoordinator(model);
