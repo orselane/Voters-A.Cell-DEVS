@@ -1,7 +1,7 @@
 #ifndef VOTER_CELL_HPP
 #define VOTER_CELL_HPP
 // Would be cool to get these from JASON
-#define PROBABILITY 20
+#define PROBABILITY 50
 #define NUM_NEIGHBORS 4
 #define rand_between(x,y) x+ rand() % (y-x)
 
