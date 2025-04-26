@@ -4,7 +4,7 @@
 #include <chrono>
 #include <fstream>
 #include <string>
-#include "include/voterCouppling.hpp"
+#include "include/voterCoupling.hpp"
 
 using namespace cadmium::celldevs;
 using namespace cadmium;

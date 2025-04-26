@@ -1,4 +1,7 @@
-#include <cadmium/celldevs/asymm/coupled.hpp>
+#ifndef VOTER_COUPLING_HPP_
+#define VOTER_COUPLING_HPP_
+
+#include <cadmium/modeling/celldevs/asymm/coupled.hpp>
 #include "voterState.hpp"
 #include "voterCell.hpp"
 #include "graphWeights.hpp"
@@ -22,3 +25,5 @@ public:
         }
     }
 }
+
+#endif
