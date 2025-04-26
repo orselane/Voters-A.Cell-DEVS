@@ -1,0 +1,13 @@
+{
+    "cells": {
+      "default": {
+        "delay": "transport",
+        "model": "voter",
+        "state": {"preference": 0}
+      },
+      
+      "cb1": {
+        "neighborhood": {"cb1": 1}
+      }
+    }
+  }
