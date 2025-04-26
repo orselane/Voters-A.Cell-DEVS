@@ -12,8 +12,8 @@
 #include <cmath>
 #include <ctime>
 #include <nlohmann/json.hpp>
-#include <cadmium/modeling/celldevs/grid/cell.hpp>
-#include <cadmium/modeling/celldevs/grid/config.hpp>
+#include <cadmium/modeling/celldevs/asymm/cell.hpp>
+#include <cadmium/modeling/celldevs/asymm/config.hpp>
 #include "voterState.hpp"
 
 using namespace cadmium::celldevs;
@@ -29,18 +29,18 @@ Preference truncToPref(float fPref){
 
 
 // Voter cell.
-class voter : public GridCell<voterState, double> {
+class voter : public AsymmCell<voterState, double> {
 	public:
 	voter(const std::vector<int>& id, 
-			const std::shared_ptr<const GridCellConfig<voterState, double>>& config
-		  ): GridCell<voterState, double>(id, config) { }
+			const std::shared_ptr<const AsymmCellConfig<voterState, double>>& config
+		  ): AsymmCell<voterState, double>(id, config) { }
 
 	// Tau function
-	[[nodiscard]] voterState localComputation(voterState state, const std::unordered_map<std::vector<int>, NeighborData<voterState, double>>& neighborhood) const override {
+	[[nodiscard]] voterState localComputation(voterState state, const std::unordered_map<std::vector<int>, NeighborData<voterState, double>>& neighborhood, const PortSet& x) const override {
 		// Create "bag" for weighted odds
 		multiset<Preferences> ms = {};
 		
-		// Add IC, if applicable
+		// Add IC, if applicable - PortSet
 		// TODO: Weak
 		// TODO: Strong
 
