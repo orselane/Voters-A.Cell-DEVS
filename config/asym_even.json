@@ -15,7 +15,7 @@
         "neighborhood": {"cb1": 1, "cb2": 1, "cb3": 1}
       },
       "cb3": {
-        "state": {"preference": 1},
+        "state": {"preference": 0},
         "neighborhood": {"cb1": 1, "cb2": 1, "cb3": 1}
       },
 
