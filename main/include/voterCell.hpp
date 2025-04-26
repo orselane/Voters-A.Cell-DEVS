@@ -1,8 +1,5 @@
 #ifndef VOTER_CELL_HPP
 #define VOTER_CELL_HPP
-// Would be cool to get these from JASON
-#define PROBABILITY 50
-#define NUM_NEIGHBORS 4
 #define rand_between(x,y) x+ rand() % (y-x)
 
 #ifndef noise
@@ -10,43 +7,59 @@
 #endif
 
 #include <cmath>
+#include <set>
 #include <ctime>
 #include <nlohmann/json.hpp>
-#include <cadmium/modeling/celldevs/grid/cell.hpp>
-#include <cadmium/modeling/celldevs/grid/config.hpp>
+#include <cadmium/modeling/celldevs/asymm/cell.hpp>
+#include <cadmium/modeling/celldevs/asymm/config.hpp>
 #include "voterState.hpp"
+#include "graphWeights.hpp"
 
 using namespace cadmium::celldevs;
 
+
+bool stateChangePossible(const std::multiset<Preference> ms){
+	// Needs to be at least one of each to make a change possible
+	return (ms.count(RED) > 0 && ms.count(BLUE) > 0);
+}
+
+
+
 // Voter cell.
-class voter : public GridCell<voterState, double> {
+class voterCell : public AsymmCell<voterState, int> {
 	public:
-	voter(const std::vector<int>& id, 
-			const std::shared_ptr<const GridCellConfig<voterState, double>>& config
-		  ): GridCell<voterState, double>(id, config) { }
+		voterCell(const std::string id, const std::shared_ptr<const AsymmCellConfig<voterState, int>>& config): 
+			AsymmCell<voterState, int>(id, config) { }
 
-	// Tau function
-	[[nodiscard]] voterState localComputation(voterState state,
-		const std::unordered_map<std::vector<int>, NeighborData<voterState, double>>& neighborhood) const override {
-		
-		// If the change probability is not met, stay within current preferance range.
-		int randomNum = rand() % 101;
-		if (randomNum < PROBABILITY){
-		   state.preference = trunc(state.preference) + noise;
-		   return state;
+		// Tau function
+		[[nodiscard]] voterState localComputation(voterState state, const std::unordered_map<std::string, NeighborData<voterState, int>>& neighborhood) const override {
+			// Create "bag" for weighted odds
+			std::multiset<Preference> ms = {};
+			
+			// Add neighbor preferences
+			for (const auto& [neighborId, neighborData] : neighborhood) {
+				double neighborPreference = neighborData.state->preference;
+				int weight = neighborData.vicinity;
+				
+				for(int i=0; i < weight; i++){
+					ms.insert(truncToPref(neighborPreference));
+				}
+			}
+
+			// Change, if needed
+			if(stateChangePossible(ms)){
+				// Set state preference to random element from ms
+				Preference random_val = *(std::next(std::begin(ms), rand_between(0, ms.size())));
+				state.preference = ((float) random_val) + noise;
+			}
+
+			return state;
 		}
-		
-		// Get random neighbor, take their preference
-		auto random_neighbor = std::next(std::begin(neighborhood), rand_between(0, neighborhood.size()));
-		state.preference = trunc(random_neighbor->second.state->preference) + noise;
 
-		return state;
-	}
-
-	// ta/D: constant delay of 1
-	[[nodiscard]] double outputDelay(const voterState& state) const override {
-		return 1.;
-	}
+		// ta/D: constant delay of 1
+		[[nodiscard]] double outputDelay(const voterState& state) const override {
+			return 1.;
+		}
 };
 
 #endif // End header

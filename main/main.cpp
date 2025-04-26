@@ -1,7 +1,7 @@
 #include "nlohmann/json.hpp"
-#include <cadmium/modeling/celldevs/grid/coupled.hpp>
 #include <cadmium/simulation/logger/csv.hpp>
 #include <cadmium/simulation/root_coordinator.hpp>
+#include <cadmium/modeling/celldevs/asymm/coupled.hpp>
 #include <chrono>
 #include <fstream>
 #include <string>
@@ -10,15 +10,16 @@
 using namespace cadmium::celldevs;
 using namespace cadmium;
 
-std::shared_ptr<GridCell<voterState, double>> addGridCell(const coordinates & cellId, const std::shared_ptr<const GridCellConfig<voterState, double>>& cellConfig) {
-	auto cellModel = cellConfig->cellModel;
 
-	if (cellModel == "voter") {
-		return std::make_shared<voter>(cellId, cellConfig);
+std::shared_ptr<AsymmCell<voterState, int>> addAsymmCell(const std::string& cellId, const std::shared_ptr<const AsymmCellConfig<voterState, int>>& cellConfig) {
+	auto cellModel = cellConfig->cellModel;
+	if (cellModel == "default" || cellModel == "voter") {
+		return std::make_shared<voterCell>(cellId, cellConfig);
 	} else {
 		throw std::bad_typeid();
 	}
 }
+
 
 int main(int argc, char ** argv) {
 	if (argc < 2) {
@@ -32,12 +33,11 @@ int main(int argc, char ** argv) {
 	std::string configFilePath = argv[1];
 	double simTime = (argc > 2)? std::stod(argv[2]) : 500;
 
-	auto model = std::make_shared<GridCellDEVSCoupled<voterState, double>>("voter", addGridCell, configFilePath);
+	auto model = std::make_shared<AsymmCellDEVSCoupled<voterState, int>>("voter", addAsymmCell, configFilePath);
 	model->buildModel();
 	
 	auto rootCoordinator = RootCoordinator(model);
-	rootCoordinator.setLogger<CSVLogger>("grid_log.csv", ";");
-	
+	rootCoordinator.setLogger<CSVLogger>("log.csv", ";");
 	rootCoordinator.start();
 	rootCoordinator.simulate(simTime);
 	rootCoordinator.stop();
