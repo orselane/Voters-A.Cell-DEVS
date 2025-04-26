@@ -6,4 +6,4 @@ target_include_directories(${projectName} PUBLIC
     ${CADMIUM_DIR}
     "${CADMIUM_DIR}/../json/include"
 )
-target_compile_options(${projectName} PUBLIC -std=gnu++2b)
+target_compile_options(${projectName} PUBLIC  -ggdb -O0 -std=gnu++2b)
