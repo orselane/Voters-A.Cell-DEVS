@@ -31,15 +31,15 @@ int main(int argc, char ** argv) {
 	// seed rand
 	srand (static_cast <unsigned> (time(0)));
 
-	// std::string configFilePath = argv[1];
-	// double simTime = (argc > 2)? std::stod(argv[2]) : 500;
+	std::string configFilePath = argv[1];
+	double simTime = (argc > 2)? std::stod(argv[2]) : 500;
 
-	// auto model = VoterCoupled("voter_graph", configFilePath) 
-	// model->buildModel();
+	auto model = VoterCoupled("voter_graph", configFilePath) 
+	model->buildModel();
 	
-	// auto rootCoordinator = RootCoordinator(model);
-	// rootCoordinator.setLogger<CSVLogger>("log.csv", ";");
-	// rootCoordinator.start();
-	// rootCoordinator.simulate(simTime);
-	// rootCoordinator.stop();
+	auto rootCoordinator = RootCoordinator(model);
+	rootCoordinator.setLogger<CSVLogger>("log.csv", ";");
+	rootCoordinator.start();
+	rootCoordinator.simulate(simTime);
+	rootCoordinator.stop();
 }
