@@ -10,6 +10,7 @@
 #endif
 
 #include <cmath>
+#include <set>
 #include <ctime>
 #include <nlohmann/json.hpp>
 #include <cadmium/modeling/celldevs/asymm/cell.hpp>
@@ -28,57 +29,56 @@ Preference truncToPref(float fPref){
 }
 
 
+bool stateChangePossible(const std::multiset<Preference> ms){
+	// Needs to be at least one of each to make a change possible
+	return (ms.count(RED) > 0 && ms.count(BLUE) > 0);
+}
+
+
+
 // Voter cell.
-class voter : public AsymmCell<voterState, double> {
+class voterCell : public AsymmCell<voterState, double> {
 	public:
-	voter(const std::vector<int>& id, 
-			const std::shared_ptr<const AsymmCellConfig<voterState, double>>& config
-		  ): AsymmCell<voterState, double>(id, config) { }
+		voterCell(const std::string id, const std::shared_ptr<const AsymmCellConfig<voterState, double>>& config): 
+			AsymmCell<voterState, double>(id, config) { }
 
-	// Tau function
-	[[nodiscard]] voterState localComputation(voterState state, const std::unordered_map<std::vector<int>, NeighborData<voterState, double>>& neighborhood, const PortSet& x) const override {
-		// Create "bag" for weighted odds
-		multiset<Preferences> ms = {};
-		
-		// Add IC, if applicable - PortSet
-		// TODO: Weak
-		// TODO: Strong
-
-		// Add neighbor preferences
-		for (const auto& [neighborId, neighborData] : neighborhood) {
-			double neighborPreference = neighborData.state->preference;
+		// Tau function
+		[[nodiscard]] voterState localComputation(voterState state, const std::unordered_map<std::string, NeighborData<voterState, double>>& neighborhood) const override {
+			// Create "bag" for weighted odds
+			std::multiset<Preference> ms = {};
 			
-			for(int i=0; i < STRONG_WEIGHT; i++){
-				ms.insert(truncToPref(neighborPreference));
+			// Add IC, if applicable - how?
+			// TODO: Weak
+			// TODO: Strong
+
+			// Add neighbor preferences
+			for (const auto& [neighborId, neighborData] : neighborhood) {
+				double neighborPreference = neighborData.state->preference;
+				
+				for(int i=0; i < STRONG_WEIGHT; i++){
+					ms.insert(truncToPref(neighborPreference));
+				}
 			}
+
+			// Add self preference
+			for(int i=0; i < STRONG_WEIGHT; i++){
+				ms.insert(truncToPref(state.preference));
+			}
+			
+			// Change, if needed
+			if(stateChangePossible(ms)){
+				// Set state preference to random element from ms
+				Preference random_val = *(std::next(std::begin(ms), rand_between(0, ms.size())));
+				state.preference = ((float) random_val) + noise;
+			}
+
+			return state;
 		}
 
-		// Add self preference
-		for(int i=0; i < STRONG_WEIGHT; i++){
-			ms.insert(truncToPref(state.preference));
+		// ta/D: constant delay of 1
+		[[nodiscard]] double outputDelay(const voterState& state) const override {
+			return 1.;
 		}
-		
-		// Change, if needed
-		static_assert(!ms.empty());
-		if(stateChangePossible(ms)){
-			// Set state preference to random element from ms
-			Preference random_val = *(std::next(std::begin(ms), rand_between(0, ms.size())));
-			state.preference = ((float) random_val) + noise;
-		}
-
-		return state;
-	}
-
-
-	bool stateChangePossible(multiset<Preference> ms){
-		// Needs to be at least one of each to make a change possible
-		return (ms.count(RED) > 0 && ms.count(BLUE) > 0);
-	}
-
-	// ta/D: constant delay of 1
-	[[nodiscard]] double outputDelay(const voterState& state) const override {
-		return 1.;
-	}
 };
 
 #endif // End header

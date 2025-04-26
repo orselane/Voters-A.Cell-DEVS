@@ -5,7 +5,7 @@
 #include <chrono>
 #include <fstream>
 #include <string>
-#include "include/voterState.hpp"
+#include "include/voterCell.hpp"
 
 using namespace cadmium::celldevs;
 using namespace cadmium;
