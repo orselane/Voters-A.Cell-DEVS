@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include "voterPreference.hpp"
 
 // Voter cell state.
 struct voterState {
@@ -19,7 +20,7 @@ struct voterState {
 
 // It prints the preference of the cell in an output stream.
 std::ostream& operator<<(std::ostream& os, const voterState& x) {
-	os << "<" << (x.preference) << ">";
+	os << "<" << (truncToPref(x.preference)) << ">";
 	return os;
 }
 

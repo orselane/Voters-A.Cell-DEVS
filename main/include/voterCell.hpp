@@ -19,15 +19,6 @@
 
 using namespace cadmium::celldevs;
 
-enum Preference {
-    BLUE, // 0 (Max <1)
-	RED // 1 (Max <2)
-};
-
-Preference truncToPref(float fPref){
-	return static_cast<Preference>((int) fPref);
-}
-
 
 bool stateChangePossible(const std::multiset<Preference> ms){
 	// Needs to be at least one of each to make a change possible
