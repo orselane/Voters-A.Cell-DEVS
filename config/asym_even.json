@@ -1,0 +1,36 @@
+{
+    "cells": {
+      "default": {
+        "delay": "transport",
+        "model": "voter"
+      },
+
+
+      "cb1": {
+        "state": {"preference": 0},
+        "neighborhood": {"cb1": 1, "cb2": 1, "cb3": 1}
+      },
+      "cb2": {
+        "state": {"preference": 0},
+        "neighborhood": {"cb1": 1, "cb2": 1, "cb3": 1}
+      },
+      "cb3": {
+        "state": {"preference": 1},
+        "neighborhood": {"cb1": 1, "cb2": 1, "cb3": 1}
+      },
+
+
+      "cr1": {
+        "state": {"preference": 1},
+        "neighborhood": {"cr1": 1, "cr2": 1, "cr3": 1}
+      },
+      "cr2": {
+        "state": {"preference": 1},
+        "neighborhood": {"cr1": 1, "cr2": 1, "cr3": 1}
+      },
+      "cr3": {
+        "state": {"preference": 1},
+        "neighborhood": {"cr1": 1, "cr2": 1, "cr3": 1}
+      }
+    }
+  }
