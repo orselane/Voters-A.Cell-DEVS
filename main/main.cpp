@@ -11,7 +11,7 @@ using namespace cadmium::celldevs;
 using namespace cadmium;
 
 
-std::shared_ptr<AsymmCell<voterState, double>> addAsymmCell(const std::string& cellId, const std::shared_ptr<const AsymmCellConfig<voterState, double>>& cellConfig) {
+std::shared_ptr<AsymmCell<voterState, int>> addAsymmCell(const std::string& cellId, const std::shared_ptr<const AsymmCellConfig<voterState, int>>& cellConfig) {
 	auto cellModel = cellConfig->cellModel;
 	if (cellModel == "default" || cellModel == "voter") {
 		return std::make_shared<voterCell>(cellId, cellConfig);
@@ -33,7 +33,7 @@ int main(int argc, char ** argv) {
 	std::string configFilePath = argv[1];
 	double simTime = (argc > 2)? std::stod(argv[2]) : 500;
 
-	auto model = std::make_shared<AsymmCellDEVSCoupled<voterState, double>>("voter", addAsymmCell, configFilePath);
+	auto model = std::make_shared<AsymmCellDEVSCoupled<voterState, int>>("voter", addAsymmCell, configFilePath);
 	model->buildModel();
 	
 	auto rootCoordinator = RootCoordinator(model);

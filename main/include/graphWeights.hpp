@@ -3,19 +3,19 @@
 
 #include<iostream>
 
-enum Weights{
+enum Weight{
     WEAK,
     STRONG
 };
 
 // Overload the >> operator for input Weights
-inline std::istream& operator>>(std::istream& in, Weights& command) {
+inline std::istream& operator>>(std::istream& in, Weight& command) {
     std::string value;
     in >> value;
 
-    static const std::unordered_map<std::string, Weights> commandMap = {
-        {"WEAK", Weights::WEAK},
-        {"STRONG", Weights::STRONG}
+    static const std::unordered_map<std::string, Weight> commandMap = {
+        {"WEAK", Weight::WEAK},
+        {"STRONG", Weight::STRONG}
     };
 
     auto it = commandMap.find(value);

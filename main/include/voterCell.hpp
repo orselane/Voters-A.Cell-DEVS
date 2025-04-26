@@ -1,8 +1,5 @@
 #ifndef VOTER_CELL_HPP
 #define VOTER_CELL_HPP
-// Would be cool to get these from JASON
-#define STRONG_WEIGHT 3
-#define WEAK_WEIGHT 1
 #define rand_between(x,y) x+ rand() % (y-x)
 
 #ifndef noise
@@ -16,6 +13,7 @@
 #include <cadmium/modeling/celldevs/asymm/cell.hpp>
 #include <cadmium/modeling/celldevs/asymm/config.hpp>
 #include "voterState.hpp"
+#include "graphWeights.hpp"
 
 using namespace cadmium::celldevs;
 
@@ -28,34 +26,26 @@ bool stateChangePossible(const std::multiset<Preference> ms){
 
 
 // Voter cell.
-class voterCell : public AsymmCell<voterState, double> {
+class voterCell : public AsymmCell<voterState, int> {
 	public:
-		voterCell(const std::string id, const std::shared_ptr<const AsymmCellConfig<voterState, double>>& config): 
-			AsymmCell<voterState, double>(id, config) { }
+		voterCell(const std::string id, const std::shared_ptr<const AsymmCellConfig<voterState, int>>& config): 
+			AsymmCell<voterState, int>(id, config) { }
 
 		// Tau function
-		[[nodiscard]] voterState localComputation(voterState state, const std::unordered_map<std::string, NeighborData<voterState, double>>& neighborhood) const override {
+		[[nodiscard]] voterState localComputation(voterState state, const std::unordered_map<std::string, NeighborData<voterState, int>>& neighborhood) const override {
 			// Create "bag" for weighted odds
 			std::multiset<Preference> ms = {};
 			
-			// Add IC, if applicable - how?
-			// TODO: Weak
-			// TODO: Strong
-
 			// Add neighbor preferences
 			for (const auto& [neighborId, neighborData] : neighborhood) {
 				double neighborPreference = neighborData.state->preference;
+				int weight = neighborData.vicinity;
 				
-				for(int i=0; i < STRONG_WEIGHT; i++){
+				for(int i=0; i < weight; i++){
 					ms.insert(truncToPref(neighborPreference));
 				}
 			}
 
-			// Add self preference
-			for(int i=0; i < STRONG_WEIGHT; i++){
-				ms.insert(truncToPref(state.preference));
-			}
-			
 			// Change, if needed
 			if(stateChangePossible(ms)){
 				// Set state preference to random element from ms
