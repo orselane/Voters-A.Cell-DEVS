@@ -1,6 +1,6 @@
-# Voters-cell-DEVS
-Cell devs implementation of a voters model. Repository located at:
-https://github.com/orselane/Voters-cell-DEVS
+# Voters-A.Cell-DEVS
+Asymmetric Cell devs implementation of a voters model. Repository located at:
+https://github.com/orselane/Voters-A.Cell-DEVS
 
 # Author
 - Name: Alexandre
@@ -14,25 +14,27 @@ https://github.com/orselane/Voters-cell-DEVS
 ```source build.sh```
 3. Run one of the test scripts (see test frames). Example:
 ```./testScripts/evenDistributionTest.sh```
-4. Grab grid_log.csv file, and put it in visualizer (at https://devssim.carleton.ca/cell-devs-viewer/)
-5. Add config/voterVisualizer_config.json in visualizer
-6. Optionally, rename grid_log.csv and move it to logs to store this test outcome in version controll.
+4. Visually inspect log.csv (Could not manage to make a visualizer work for asymmetric cell devs)
 
 # Test frames
 The testScripts folder has three possible experimental frames.
-Between the frames, the controlled variable is the initial proportional distribution of preferences on the board. 
-Note: The inital positions are arbitrarily distributed, according to the determined proportions.
+Between the frames, the controlled variable is the weight between cr1, cb1 (red cell 1, blue cell 1).
+There are three cells initially blue (cb1, cb2, cb3) and three intially red (cr1, cr2, cr3).
+All cells are linked to their same colored neighbors at a standard weight of 3, 
+plus the link between cr1 and cb1 which varies depeding on the test case.
 
-## evenDistributionTest.sh
-This test distribution spreads the preferences equally for the main preferences, 
-leaving a few with the neutral preference: (R: 0.45, B:0.45, N:0.1)
-```./testScripts/evenDistributionTest.sh```
+## evenTest.sh
+This test defines an equal weight between all links, including the one between cr1, cb1 (weight of 3 both ways).
+```./testScripts/evenTest.sh```
 
-## noNeutralityTest.sh
-This test distribution spreads the preferences equally for the main preferences, 
-but with no cells with a neutral preference: (R: 0.5, B:0.5, N:0.0)
-```./testScripts/noNeutralityTest.sh```
+## skewedTest.sh
+This test defines a skewed weight between cr1, and cb1.
+There is a weight of 1 influencing cb1 from cr1.
+There is a weight of 6 influencing cr1 from cb1.
+```./testScripts/skewedTest.sh```
 
-## skewedDistributionTest.sh
-This test distribution skews the preferences towards Red initially: (R: 0.7, B:0.2, N:0.1)
-```./testScripts/skewedDistributionTest.sh```
+## unilateralTest.sh
+This test defines a unilateral weight between cr1, and cb1.
+There is a weight of 1 influencing cb1 from cr1.
+There is no influence on cr1 from cb1.
+```./testScripts/unilateralTest.sh```

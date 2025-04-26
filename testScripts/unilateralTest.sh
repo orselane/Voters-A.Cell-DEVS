@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 cd "$(dirname "$0")"
 cd ..
-bin/voter config/voter_skewed.json
+bin/asym_voter config/asym_unilateral.json
