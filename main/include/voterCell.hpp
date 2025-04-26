@@ -1,8 +1,8 @@
 #ifndef VOTER_CELL_HPP
 #define VOTER_CELL_HPP
 // Would be cool to get these from JASON
-#define PROBABILITY 50
-#define NUM_NEIGHBORS 4
+#define STRONG_WEIGHT 3
+#define WEAK_WEIGHT 1
 #define rand_between(x,y) x+ rand() % (y-x)
 
 #ifndef noise
@@ -18,10 +18,14 @@
 
 using namespace cadmium::celldevs;
 
-enum Preferences {
+enum Preference {
     BLUE, // 0 (Max <1)
 	RED // 1 (Max <2)
 };
+
+Preference truncToPref(float fPref){
+	return static_cast<Preference>((int) fPref);
+}
 
 
 // Voter cell.
@@ -32,21 +36,43 @@ class voter : public GridCell<voterState, double> {
 		  ): GridCell<voterState, double>(id, config) { }
 
 	// Tau function
-	[[nodiscard]] voterState localComputation(voterState state,
-		const std::unordered_map<std::vector<int>, NeighborData<voterState, double>>& neighborhood) const override {
+	[[nodiscard]] voterState localComputation(voterState state, const std::unordered_map<std::vector<int>, NeighborData<voterState, double>>& neighborhood) const override {
+		// Create "bag" for weighted odds
+		multiset<Preferences> ms = {};
 		
-		// If the change probability is not met, stay within current preferance range.
-		int randomNum = rand() % 101;
-		if (randomNum < PROBABILITY){
-		   state.preference = trunc(state.preference) + noise;
-		   return state;
+		// Add IC, if applicable
+		// TODO: Weak
+		// TODO: Strong
+
+		// Add neighbor preferences
+		for (const auto& [neighborId, neighborData] : neighborhood) {
+			double neighborPreference = neighborData.state->preference;
+			
+			for(int i=0; i < STRONG_WEIGHT; i++){
+				ms.insert(truncToPref(neighborPreference));
+			}
+		}
+
+		// Add self preference
+		for(int i=0; i < STRONG_WEIGHT; i++){
+			ms.insert(truncToPref(state.preference));
 		}
 		
-		// Get random neighbor, take their preference
-		auto random_neighbor = std::next(std::begin(neighborhood), rand_between(0, neighborhood.size()));
-		state.preference = trunc(random_neighbor->second.state->preference) + noise;
+		// Change, if needed
+		static_assert(!ms.empty());
+		if(stateChangePossible(ms)){
+			// Set state preference to random element from ms
+			Preference random_val = *(std::next(std::begin(ms), rand_between(0, ms.size())));
+			state.preference = ((float) random_val) + noise;
+		}
 
 		return state;
+	}
+
+
+	bool stateChangePossible(multiset<Preference> ms){
+		// Needs to be at least one of each to make a change possible
+		return (ms.count(RED) > 0 && ms.count(BLUE) > 0);
 	}
 
 	// ta/D: constant delay of 1
