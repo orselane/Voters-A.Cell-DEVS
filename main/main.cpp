@@ -34,7 +34,7 @@ int main(int argc, char ** argv) {
 	std::string configFilePath = argv[1];
 	double simTime = (argc > 2)? std::stod(argv[2]) : 500;
 
-	auto model = VoterCoupled("voter_graph", configFilePath) 
+	auto model = std::make_shared<AsymmCellDEVSCoupled<voterState, double>>("voter", addAsymmCell, configFilePath);
 	model->buildModel();
 	
 	auto rootCoordinator = RootCoordinator(model);
