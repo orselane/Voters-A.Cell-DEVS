@@ -14,8 +14,7 @@ using namespace cadmium;
 std::shared_ptr<AsymmCell<voterState, double>> addAsymmCell(const std::string& cellId, const std::shared_ptr<const AsymmCellConfig<voterState, double>>& cellConfig) {
 	auto cellModel = cellConfig->cellModel;
 	if (cellModel == "default" || cellModel == "voter") {
-		// return std::make_shared<voterCell>(cellId, cellConfig);
-		return NULL;
+		return std::make_shared<voterCell>(cellId, cellConfig);
 	} else {
 		throw std::bad_typeid();
 	}
