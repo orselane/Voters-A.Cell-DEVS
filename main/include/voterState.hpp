@@ -10,7 +10,7 @@
 
 // Voter cell state.
 struct voterState {
-	// 0-1 = Neutral, 1-2 = Blue, 2-3 = Red. (incl. min, exlcu. max)
+	// 0-1 = Blue, 1-2 = Red. (incl. min, exlcu. max)
 	float preference;
 
 	// Default constructor function.

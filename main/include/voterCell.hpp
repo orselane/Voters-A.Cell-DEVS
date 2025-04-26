@@ -18,6 +18,12 @@
 
 using namespace cadmium::celldevs;
 
+enum Preferences {
+    BLUE, // 0 (Max <1)
+	RED // 1 (Max <2)
+};
+
+
 // Voter cell.
 class voter : public GridCell<voterState, double> {
 	public:
